@@ -269,7 +269,7 @@ func GetJsonTag(field *google_protobuf.FieldDescriptorProto) *string {
 	if field.Options != nil {
 		v, err := proto.GetExtension(field.Options, E_Jsontag)
 		if err == nil && v.(*string) != nil {
-			return (v.(*string))
+			return v.(*string)
 		}
 	}
 	return nil

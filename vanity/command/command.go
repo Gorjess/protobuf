@@ -52,6 +52,7 @@ import (
 	_ "github.com/gogo/protobuf/plugin/union"
 	_ "github.com/gogo/protobuf/plugin/unmarshal"
 	"github.com/gogo/protobuf/proto"
+	_ "github.com/gogo/protobuf/protoc-gen-gogo/g4b"
 	"github.com/gogo/protobuf/protoc-gen-gogo/generator"
 	_ "github.com/gogo/protobuf/protoc-gen-gogo/grpc"
 	plugin "github.com/gogo/protobuf/protoc-gen-gogo/plugin"

@@ -141,6 +141,7 @@ option `stable_marshaler_all`) exists which causes the generated marshalling
 code to behave deterministically. Today, this only changes the serialization of
 maps; they are serialized in sort order.
 */
+
 package marshalto
 
 import (

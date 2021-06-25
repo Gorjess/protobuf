@@ -2832,22 +2832,25 @@ func (g *Generator) generateMessage(message *Descriptor) {
 		fieldName, fieldGetterName := ns[0], ns[1]
 
 		typename, wiretype := g.GoType(message, field)
-		jsonName := *field.Name
-		jsonTag := jsonName + ",omitempty"
-		repeatedNativeType := (!field.IsMessage() && !gogoproto.IsCustomType(field) && field.IsRepeated())
-		if !gogoproto.IsNullable(field) && !repeatedNativeType {
-			jsonTag = jsonName
-		}
-		gogoJsonTag := gogoproto.GetJsonTag(field)
-		if gogoJsonTag != nil {
-			jsonTag = *gogoJsonTag
-		}
+		//jsonName := *field.Name
+		//jsonTag := jsonName + ",omitempty"
+		//repeatedNativeType := !field.IsMessage() && !gogoproto.IsCustomType(field) && field.IsRepeated()
+		//if !gogoproto.IsNullable(field) && !repeatedNativeType {
+		//	jsonTag = jsonName
+		//}
+		//gogoJsonTag := gogoproto.GetJsonTag(field)
+		//if gogoJsonTag != nil {
+		//	jsonTag = *gogoJsonTag
+		//}
+
 		gogoMoreTags := gogoproto.GetMoreTags(field)
 		moreTags := ""
 		if gogoMoreTags != nil {
 			moreTags = " " + *gogoMoreTags
 		}
-		tag := fmt.Sprintf("protobuf:%s json:%q%s", g.goTag(message, field, wiretype), jsonTag, moreTags)
+		//tag := fmt.Sprintf("protobuf:%s json:%q%s", g.goTag(message, field, wiretype), jsonTag, moreTags)
+
+		tag := fmt.Sprintf("protobuf:%s%s", g.goTag(message, field, wiretype), moreTags)
 		if *field.Type == descriptor.FieldDescriptorProto_TYPE_MESSAGE && gogoproto.IsEmbed(field) {
 			fieldName = ""
 		}
@@ -3308,13 +3311,14 @@ func CamelCase(s string) string {
 	i := 0
 	if s[0] == '_' {
 		// Need a capital letter; drop the '_'.
-		t = append(t, 'X')
+		t = append(t, 'x')
 		i++
 	}
 	// Invariant: if the next letter is lower case, it must be converted
 	// to upper case.
 	// That is, we process a word at a time, where words are marked by _ or
 	// upper case letter. Digits are treated as words.
+	alreadyStartWithLowerCase := false
 	for ; i < len(s); i++ {
 		c := s[i]
 		if c == '_' && i+1 < len(s) && isASCIILower(s[i+1]) {
@@ -3326,8 +3330,10 @@ func CamelCase(s string) string {
 		}
 		// Assume we have a letter now - if not, it's a bogus identifier.
 		// The next word is a sequence of characters that must start upper case.
-		if isASCIILower(c) {
-			c ^= ' ' // Make it a capital letter.
+		// 2021-06-25: 添加条件 !alreadyStartWithLowerCase，表示仅转换第一个字母为小写
+		if !alreadyStartWithLowerCase && !isASCIILower(c) {
+			c |= ' ' // Make it a lower-case letter.
+			alreadyStartWithLowerCase = true
 		}
 		t = append(t, c) // Guaranteed not lower case.
 		// Accept lower case sequence that follows.
