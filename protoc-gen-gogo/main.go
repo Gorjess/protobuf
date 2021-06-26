@@ -54,6 +54,5 @@ import (
 
 func main() {
 	//time.Sleep(time.Second*15)
-
 	command.Write(command.Generate(command.Read()))
 }

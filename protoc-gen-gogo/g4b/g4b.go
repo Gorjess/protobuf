@@ -2,7 +2,6 @@ package g4b
 
 import (
 	"github.com/gogo/protobuf/protoc-gen-gogo/generator"
-	"log"
 	"strings"
 )
 
@@ -56,7 +55,7 @@ func (g *g4b) Generate(file *generator.FileDescriptor) {
 				case syncTypeRedis:
 				case syncTypeDB:
 				default:
-					log.Printf("invalid sync type:%s, %v", n, names)
+					//log.Printf("invalid sync type:%s, %v", n, names)
 				}
 			}
 		}

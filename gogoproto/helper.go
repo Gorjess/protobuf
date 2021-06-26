@@ -28,7 +28,10 @@
 
 package gogoproto
 
-import google_protobuf "github.com/gogo/protobuf/protoc-gen-gogo/descriptor"
+import (
+	google_protobuf "github.com/gogo/protobuf/protoc-gen-gogo/descriptor"
+	"strings"
+)
 import proto "github.com/gogo/protobuf/proto"
 
 func IsEmbed(field *google_protobuf.FieldDescriptorProto) bool {
@@ -413,3 +416,5 @@ func HasSizecache(file *google_protobuf.FileDescriptorProto, message *google_pro
 func HasUnkeyed(file *google_protobuf.FileDescriptorProto, message *google_protobuf.DescriptorProto) bool {
 	return proto.GetBoolExtension(message.Options, E_GoprotoUnkeyed, proto.GetBoolExtension(file.Options, E_GoprotoUnkeyedAll, true))
 }
+
+func ToUpper(s string) string { return strings.ToUpper(s[:1]) + s[1:] }

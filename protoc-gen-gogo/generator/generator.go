@@ -2446,6 +2446,7 @@ func (g *Generator) generateGet(mc *msgCtx, protoField *descriptor.FieldDescript
 		// as does a message or group field, or a repeated field.
 		g.P("if m != nil {")
 		g.In()
+		//g.P("return m." + fname)
 		g.P("return m." + fname)
 		g.Out()
 		g.P("}")
@@ -2630,7 +2631,6 @@ func (g *Generator) generateMessageStruct(mc *msgCtx, topLevelFields []topLevelF
 func (g *Generator) generateGetters(mc *msgCtx, topLevelFields []topLevelField) {
 	for _, pf := range topLevelFields {
 		pf.getter(g, mc)
-
 	}
 }
 
@@ -2780,7 +2780,7 @@ func (g *Generator) generateCommonMethods(mc *msgCtx) {
 
 // Generate the type and default constant definitions for this Descriptor.
 func (g *Generator) generateMessage(message *Descriptor) {
-	topLevelFields := []topLevelField{}
+	var topLevelFields []topLevelField
 	oFields := make(map[int32]*oneofField)
 	// The full type name
 	typeName := message.TypeName()
@@ -2818,6 +2818,7 @@ func (g *Generator) generateMessage(message *Descriptor) {
 
 	mapFieldTypes := make(map[*descriptor.FieldDescriptorProto]string) // keep track of the map fields to be added later
 
+	upperBase := ""
 	for i, field := range message.Field {
 		// Allocate the getter and the field at the same time so name
 		// collisions create field/method consistent names.
@@ -2828,7 +2829,8 @@ func (g *Generator) generateMessage(message *Descriptor) {
 		if gogoproto.IsCustomName(field) {
 			base = gogoproto.GetCustomName(field)
 		}
-		ns := allocNames(base, "Get"+base)
+		upperBase = gogoproto.ToUpper(base)
+		ns := allocNames(base, "Get"+upperBase)
 		fieldName, fieldGetterName := ns[0], ns[1]
 
 		typename, wiretype := g.GoType(message, field)
@@ -2859,7 +2861,8 @@ func (g *Generator) generateMessage(message *Descriptor) {
 		if oneof && oFields[*field.OneofIndex] == nil {
 			odp := message.OneofDecl[int(*field.OneofIndex)]
 			base := CamelCase(odp.GetName())
-			names := allocNames(base, "Get"+base)
+			upperBase = gogoproto.ToUpper(base)
+			names := allocNames(base, "Get"+upperBase)
 			fname, gname := names[0], names[1]
 
 			// This is the first field of a oneof we haven't seen before.
